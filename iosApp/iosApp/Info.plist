@@ -12,5 +12,7 @@
 	<string>We need access Current Location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs access to your photos to let you select images for your profile picture.</string>
+    <key>NSContactsUsageDescription</key>
+    <string>This app needs access to your Contact.</string>
 </dict>
 </plist>

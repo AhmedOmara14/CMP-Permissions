@@ -24,10 +24,14 @@ class AppViewModel(
     private val _galleryPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
     val galleryPermissionState: StateFlow<UIPermissionState> = _galleryPermissionState
 
+    private val _contactPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
+    val contactPermissionState: StateFlow<UIPermissionState> = _contactPermissionState
+
     init {
         checkCameraPermission()
         checkLocationPermission()
         checkGalleryPermission()
+        checkContactPermission()
     }
     private fun checkCameraPermission(){
         viewModelScope.launch {
@@ -84,7 +88,6 @@ class AppViewModel(
 
     private fun checkGalleryPermission(){
         viewModelScope.launch {
-            println("PERS"+ permissionsController.getPermissionState(Permission.GALLERY))
             val status = permissionsController.isPermissionGranted(Permission.GALLERY)
             _galleryPermissionState.value = when (status) {
                 true -> UIPermissionState.GRANTED
@@ -106,6 +109,33 @@ class AppViewModel(
                 permissionsController.openAppSettings()
             } catch (e: Exception) {
                 _galleryPermissionState.value = UIPermissionState.UNKNOWN
+            }
+        }
+    }
+
+    private fun checkContactPermission(){
+        viewModelScope.launch {
+            val status = permissionsController.isPermissionGranted(Permission.CONTACTS)
+            _contactPermissionState.value = when (status) {
+                true -> UIPermissionState.GRANTED
+                false -> UIPermissionState.DENIED
+            }
+        }
+    }
+
+    fun requestContactPermission() {
+        viewModelScope.launch {
+            try {
+                permissionsController.providePermission(Permission.CONTACTS)
+                _contactPermissionState.value = UIPermissionState.GRANTED
+            } catch (e: DeniedException) {
+                // User denied the permission once (can be asked again)
+                _contactPermissionState.value = UIPermissionState.DENIED
+            } catch (e: DeniedAlwaysException) {
+                _contactPermissionState.value = UIPermissionState.DENIED_PERMANENTLY
+                permissionsController.openAppSettings()
+            } catch (e: Exception) {
+                _contactPermissionState.value = UIPermissionState.UNKNOWN
             }
         }
     }
