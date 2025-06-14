@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="camera_permission_status">Camera Permission Status</string>
+    <string name="location_permission_status">Location Permission Status</string>
+    <string name="gallery_permission_status">Gallery Permission Status</string>
+    <string name="contact_permission_status">Contact Permission Status</string>
+    <string name="record_permission_status">Record Audio Permission Status</string>
+    <string name="notification_permission_status">Notification Permission Status</string>
+    <string name="denied_permanently_permission_status">,Permission permanently denied. Please enable it in app settings.</string>
+    <string name="denied_permission_status">Permission Denied. You can try again.</string>
+    <string name="granted_permission_status">Permission Granted</string>
+    <string name="request_permission_status">Request Permission</string>
+</resources>
