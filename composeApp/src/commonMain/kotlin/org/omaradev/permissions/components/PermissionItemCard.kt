@@ -37,13 +37,20 @@ fun PermissionItemCard(
     cameraPermissionState: UIPermissionState,
     onClick: () -> Unit = {}
 ) {
+    val containerColor = when (cameraPermissionState) {
+        UIPermissionState.UNKNOWN -> PendingColor
+        UIPermissionState.GRANTED -> ActiveColor
+        UIPermissionState.DENIED -> PendingColor
+        UIPermissionState.DENIED_PERMANENTLY -> Color.Red.copy(.7f)
+    }
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = if (cameraPermissionState == UIPermissionState.GRANTED) ActiveColor else PendingColor,
+            containerColor = containerColor,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).clickable { onClick() }
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 24.dp),
