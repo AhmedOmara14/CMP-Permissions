@@ -21,9 +21,13 @@ class AppViewModel(
     private val _locationPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
     val locationPermissionState: StateFlow<UIPermissionState> = _locationPermissionState
 
+    private val _galleryPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
+    val galleryPermissionState: StateFlow<UIPermissionState> = _galleryPermissionState
+
     init {
         checkCameraPermission()
         checkLocationPermission()
+        checkGalleryPermission()
     }
     private fun checkCameraPermission(){
         viewModelScope.launch {
@@ -47,7 +51,6 @@ class AppViewModel(
                 permissionsController.openAppSettings()
             } catch (e: Exception) {
                 _cameraPermissionState.value = UIPermissionState.UNKNOWN
-                println("Error requesting camera permission: ${e.message}")
             }
         }
     }
@@ -75,7 +78,34 @@ class AppViewModel(
                 permissionsController.openAppSettings()
             } catch (e: Exception) {
                 _locationPermissionState.value = UIPermissionState.UNKNOWN
-                println("Error requesting camera permission: ${e.message}")
+            }
+        }
+    }
+
+    private fun checkGalleryPermission(){
+        viewModelScope.launch {
+            println("PERS"+ permissionsController.getPermissionState(Permission.GALLERY))
+            val status = permissionsController.isPermissionGranted(Permission.GALLERY)
+            _galleryPermissionState.value = when (status) {
+                true -> UIPermissionState.GRANTED
+                false -> UIPermissionState.DENIED
+            }
+        }
+    }
+
+    fun requestGalleryPermission() {
+        viewModelScope.launch {
+            try {
+                permissionsController.providePermission(Permission.GALLERY)
+                _galleryPermissionState.value = UIPermissionState.GRANTED
+            } catch (e: DeniedException) {
+                // User denied the permission once (can be asked again)
+                _galleryPermissionState.value = UIPermissionState.DENIED
+            } catch (e: DeniedAlwaysException) {
+                _galleryPermissionState.value = UIPermissionState.DENIED_PERMANENTLY
+                permissionsController.openAppSettings()
+            } catch (e: Exception) {
+                _galleryPermissionState.value = UIPermissionState.UNKNOWN
             }
         }
     }

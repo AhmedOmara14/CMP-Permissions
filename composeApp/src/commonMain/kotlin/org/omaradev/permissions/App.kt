@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.omaradev.permissions.components.CameraPermissionCard
+import org.omaradev.permissions.components.GalleryPermissionCard
 import org.omaradev.permissions.components.LocationPermissionCard
 
 @Composable
@@ -18,6 +19,7 @@ fun App(appViewModel: AppViewModel) {
         ) {
             CameraPermissionCard(appViewModel)
             LocationPermissionCard(appViewModel)
+            GalleryPermissionCard(appViewModel)
         }
     }
 }
