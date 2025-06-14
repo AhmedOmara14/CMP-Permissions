@@ -18,10 +18,14 @@ class AppViewModel(
     private val _cameraPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
     val cameraPermissionState: StateFlow<UIPermissionState> = _cameraPermissionState
 
+    private val _locationPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
+    val locationPermissionState: StateFlow<UIPermissionState> = _locationPermissionState
+
     init {
         checkCameraPermission()
+        checkLocationPermission()
     }
-    fun checkCameraPermission(){
+    private fun checkCameraPermission(){
         viewModelScope.launch {
             val status = permissionsController.isPermissionGranted(Permission.CAMERA)
             _cameraPermissionState.value = when (status) {
@@ -43,6 +47,34 @@ class AppViewModel(
                 permissionsController.openAppSettings()
             } catch (e: Exception) {
                 _cameraPermissionState.value = UIPermissionState.UNKNOWN
+                println("Error requesting camera permission: ${e.message}")
+            }
+        }
+    }
+
+    private fun checkLocationPermission(){
+        viewModelScope.launch {
+            val status = permissionsController.isPermissionGranted(Permission.COARSE_LOCATION)
+            _locationPermissionState.value = when (status) {
+                true -> UIPermissionState.GRANTED
+                false -> UIPermissionState.DENIED
+            }
+        }
+    }
+
+    fun requestLocationPermission() {
+        viewModelScope.launch {
+            try {
+                permissionsController.providePermission(Permission.COARSE_LOCATION)
+                _locationPermissionState.value = UIPermissionState.GRANTED
+            } catch (e: DeniedException) {
+                // User denied the permission once (can be asked again)
+                _locationPermissionState.value = UIPermissionState.DENIED
+            } catch (e: DeniedAlwaysException) {
+                _locationPermissionState.value = UIPermissionState.DENIED_PERMANENTLY
+                permissionsController.openAppSettings()
+            } catch (e: Exception) {
+                _locationPermissionState.value = UIPermissionState.UNKNOWN
                 println("Error requesting camera permission: ${e.message}")
             }
         }

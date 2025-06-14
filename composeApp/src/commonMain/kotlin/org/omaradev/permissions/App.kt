@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.omaradev.permissions.components.CameraPermissionCard
+import org.omaradev.permissions.components.LocationPermissionCard
 
 @Composable
 fun App(appViewModel: AppViewModel) {
@@ -16,6 +17,7 @@ fun App(appViewModel: AppViewModel) {
             modifier = Modifier.fillMaxSize().padding(top = 24.dp)
         ) {
             CameraPermissionCard(appViewModel)
+            LocationPermissionCard(appViewModel)
         }
     }
 }
