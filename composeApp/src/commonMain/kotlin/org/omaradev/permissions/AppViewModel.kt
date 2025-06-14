@@ -27,11 +27,15 @@ class AppViewModel(
     private val _contactPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
     val contactPermissionState: StateFlow<UIPermissionState> = _contactPermissionState
 
+    private val _recordAudioPermissionState = MutableStateFlow(UIPermissionState.UNKNOWN)
+    val recordAudioPermissionState: StateFlow<UIPermissionState> = _recordAudioPermissionState
+
     init {
         checkCameraPermission()
         checkLocationPermission()
         checkGalleryPermission()
         checkContactPermission()
+        checkRecordAudioPermission()
     }
     private fun checkCameraPermission(){
         viewModelScope.launch {
@@ -136,6 +140,33 @@ class AppViewModel(
                 permissionsController.openAppSettings()
             } catch (e: Exception) {
                 _contactPermissionState.value = UIPermissionState.UNKNOWN
+            }
+        }
+    }
+
+    private fun checkRecordAudioPermission(){
+        viewModelScope.launch {
+            val status = permissionsController.isPermissionGranted(Permission.RECORD_AUDIO)
+            _recordAudioPermissionState.value = when (status) {
+                true -> UIPermissionState.GRANTED
+                false -> UIPermissionState.DENIED
+            }
+        }
+    }
+
+    fun requestRecordAudioPermission() {
+        viewModelScope.launch {
+            try {
+                permissionsController.providePermission(Permission.RECORD_AUDIO)
+                _recordAudioPermissionState.value = UIPermissionState.GRANTED
+            } catch (e: DeniedException) {
+                // User denied the permission once (can be asked again)
+                _recordAudioPermissionState.value = UIPermissionState.DENIED
+            } catch (e: DeniedAlwaysException) {
+                _recordAudioPermissionState.value = UIPermissionState.DENIED_PERMANENTLY
+                permissionsController.openAppSettings()
+            } catch (e: Exception) {
+                _recordAudioPermissionState.value = UIPermissionState.UNKNOWN
             }
         }
     }

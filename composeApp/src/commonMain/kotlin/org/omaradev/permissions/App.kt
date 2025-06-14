@@ -11,6 +11,7 @@ import org.omaradev.permissions.components.CameraPermissionCard
 import org.omaradev.permissions.components.ContactPermissionCard
 import org.omaradev.permissions.components.GalleryPermissionCard
 import org.omaradev.permissions.components.LocationPermissionCard
+import org.omaradev.permissions.components.RecordAudioPermissionCard
 
 @Composable
 fun App(appViewModel: AppViewModel) {
@@ -22,6 +23,7 @@ fun App(appViewModel: AppViewModel) {
             LocationPermissionCard(appViewModel)
             GalleryPermissionCard(appViewModel)
             ContactPermissionCard(appViewModel)
+            RecordAudioPermissionCard(appViewModel)
         }
     }
 }
